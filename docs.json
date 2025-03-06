@@ -57,7 +57,7 @@
       "anchors": [
         {
           "anchor": "Documentation",
-          "href": "https://pulsery.live/docs",
+          "href": "https://api.pulsery.live",
           "icon": "book-open-cover"
         },
         {

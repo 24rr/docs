@@ -1,107 +1,200 @@
 ---
-title: 'Development'
-description: 'Preview changes locally to update your docs'
+title: 'Development Guide'
+description: 'Advanced integration with the Pulsery API'
 ---
 
 <Info>
-  **Prerequisite**: Please install Node.js (version 19 or higher) before proceeding. <br />
-  Please upgrade to ```docs.json``` before proceeding and delete the legacy ```mint.json``` file.
+  This guide provides advanced information for developers integrating with the Pulsery API.
 </Info>
 
-Follow these steps to install and run Mintlify on your operating system:
+## API Integration Best Practices
 
-**Step 1**: Install Mintlify:
+Follow these best practices when integrating with the Pulsery API to ensure optimal performance and reliability:
+
+### Error Handling
+
+Always implement proper error handling in your API requests. The Pulsery API returns standard HTTP status codes along with detailed error messages in the response body.
 
 <CodeGroup>
 
-  ```bash npm
-  npm i -g mintlify
-  ```
+```javascript JavaScript
+fetch('https://api.pulsery.live/api/exploits')
+  .then(response => {
+    if (!response.ok) {
+      // Convert non-2xx HTTP responses into errors
+      return response.json().then(errorData => {
+        throw new Error(errorData.message || 'Unknown error occurred');
+      });
+    }
+    return response.json();
+  })
+  .then(data => {
+    // Handle successful response
+    console.log(data);
+  })
+  .catch(error => {
+    // Handle errors
+    console.error('API Error:', error.message);
+    // Show user-friendly error message
+  });
+```
 
-```bash yarn
-yarn global add mintlify
+```python Python
+import requests
+
+try:
+    response = requests.get('https://api.pulsery.live/api/exploits')
+    response.raise_for_status()  # Raises an exception for 4XX/5XX responses
+    data = response.json()
+    # Process data
+except requests.exceptions.HTTPError as http_err:
+    # Handle HTTP errors
+    error_message = response.json().get('message', 'Unknown error')
+    print(f"HTTP error occurred: {error_message}")
+except Exception as err:
+    # Handle other errors
+    print(f"Other error occurred: {err}")
 ```
 
 </CodeGroup>
 
-**Step 2**: Navigate to the docs directory (where the `docs.json` file is located) and execute the following command:
+### Caching Responses
 
-```bash
-mintlify dev
-```
-
-A local preview of your documentation will be available at `http://localhost:3000`.
-
-### Custom Ports
-
-By default, Mintlify uses port 3000. You can customize the port Mintlify runs on by using the `--port` flag. To run Mintlify on port 3333, for instance, use this command:
-
-```bash
-mintlify dev --port 3333
-```
-
-If you attempt to run Mintlify on a port that's already in use, it will use the next available port:
-
-```md
-Port 3000 is already in use. Trying 3001 instead.
-```
-
-## Mintlify Versions
-
-Please note that each CLI release is associated with a specific version of Mintlify. If your local website doesn't align with the production version, please update the CLI:
+To improve performance and reduce load on our servers, consider caching API responses when appropriate:
 
 <CodeGroup>
 
-```bash npm
-npm i -g mintlify@latest
+```javascript JavaScript
+// Simple in-memory cache
+const cache = new Map();
+const CACHE_TTL = 60000; // 1 minute in milliseconds
+
+async function fetchWithCache(url) {
+  const now = Date.now();
+  const cacheKey = url;
+  
+  // Check if we have a cached response that's still valid
+  if (cache.has(cacheKey)) {
+    const { data, timestamp } = cache.get(cacheKey);
+    if (now - timestamp < CACHE_TTL) {
+      console.log('Using cached data');
+      return data;
+    }
+  }
+  
+  // Fetch fresh data
+  console.log('Fetching fresh data');
+  const response = await fetch(url);
+  const data = await response.json();
+  
+  // Cache the response
+  cache.set(cacheKey, { data, timestamp: now });
+  
+  return data;
+}
+
+// Usage
+fetchWithCache('https://api.pulsery.live/api/exploits')
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
 ```
 
-```bash yarn
-yarn global upgrade mintlify
+```python Python
+import requests
+import time
+
+# Simple in-memory cache
+cache = {}
+CACHE_TTL = 60  # 1 minute in seconds
+
+def fetch_with_cache(url):
+    now = time.time()
+    cache_key = url
+    
+    # Check if we have a cached response that's still valid
+    if cache_key in cache:
+        data, timestamp = cache[cache_key]
+        if now - timestamp < CACHE_TTL:
+            print('Using cached data')
+            return data
+    
+    # Fetch fresh data
+    print('Fetching fresh data')
+    response = requests.get(url)
+    response.raise_for_status()
+    data = response.json()
+    
+    # Cache the response
+    cache[cache_key] = (data, now)
+    
+    return data
+
+# Usage
+try:
+    data = fetch_with_cache('https://api.pulsery.live/api/exploits')
+    print(data)
+except Exception as e:
+    print(f"Error: {e}")
 ```
 
 </CodeGroup>
 
-## Validating Links
+## Webhooks (Coming Soon)
 
-The CLI can assist with validating reference links made in your documentation. To identify any broken links, use the following command:
+Pulsery will soon offer webhooks to notify your application of events in real-time. This will allow you to receive updates when:
 
-```bash
-mintlify broken-links
-```
+- New exploits are added
+- Exploit status changes
+- Version updates occur
 
-## Deployment
+Stay tuned for more information on webhook integration.
 
-<Tip>
-  Unlimited editors available under the [Pro
-  Plan](https://mintlify.com/pricing) and above.
-</Tip>
+## Rate Limiting Considerations
 
-If the deployment is successful, you should see the following:
+While Pulsery doesn't currently implement strict rate limiting, we recommend implementing reasonable request patterns to ensure API stability:
 
-<Frame>
-  <img src="/images/checks-passed.png" style={{ borderRadius: '0.5rem' }} />
-</Frame>
+- Implement caching as described above
+- Avoid making unnecessary duplicate requests
+- Consider using batch requests when possible
+- Implement exponential backoff for retries
 
-## Code Formatting
+## Example Applications
 
-We suggest using extensions on your IDE to recognize and format MDX. If you're a VSCode user, consider the [MDX VSCode extension](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) for syntax highlighting, and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) for code formatting.
-
-## Troubleshooting
+Here are some examples of how you can use the Pulsery API in your applications:
 
 <AccordionGroup>
-  <Accordion title='Error: Could not load the "sharp" module using the darwin-arm64 runtime'>
-
-    This may be due to an outdated version of node. Try the following:
-    1. Remove the currently-installed version of mintlify: `npm remove -g mintlify`
-    2. Upgrade to Node v19 or higher.
-    3. Reinstall mintlify: `npm install -g mintlify`
+  <Accordion title="Exploit Status Dashboard">
+    Create a dashboard that displays the status of all exploits, with real-time updates when statuses change.
+    
+    Key features:
+    - Visual indicators for exploit status
+    - Filtering by platform, type, and status
+    - Detailed view for each exploit
   </Accordion>
 
-  <Accordion title="Issue: Encountering an unknown error">
+  <Accordion title="Version Notification System">
+    Build a notification system that alerts users when new versions are available.
+    
+    Key features:
+    - Email or push notifications for version changes
+    - Customizable notification preferences
+    - Version history tracking
+  </Accordion>
   
-    Solution: Go to the root of your device and delete the \~/.mintlify folder. Afterwards, run `mintlify dev` again.
+  <Accordion title="Mobile Companion App">
+    Develop a mobile app that provides easy access to exploit information on the go.
+    
+    Key features:
+    - Mobile-optimized interface
+    - Offline caching of exploit data
+    - Push notifications for status changes
   </Accordion>
 </AccordionGroup>
 
-Curious about what changed in the CLI version? [Check out the CLI changelog.](https://www.npmjs.com/package/mintlify?activeTab=versions)
+## Need Help?
+
+If you encounter any issues or have questions about integrating with the Pulsery API, please reach out to our support team:
+
+- Join our [Discord community](https://discord.gg/pulsery)
+- Email us at [support@pulsery.live](mailto:support@pulsery.live)
+- Check our [GitHub repository](https://github.com/pulsery) for example code and integration guides
