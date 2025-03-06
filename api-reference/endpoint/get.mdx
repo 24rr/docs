@@ -1,4 +1,183 @@
 ---
-title: 'Get Plants'
-openapi: 'GET /plants'
+title: 'Exploits'
+description: 'Endpoints for retrieving exploit information'
 ---
+
+# Exploits API
+
+The Exploits API provides access to information about available exploits.
+
+## Get All Exploits
+
+Retrieves a list of all available exploits.
+
+```
+GET /api/exploits
+```
+
+### Response
+
+Returns a JSON array of exploit objects.
+
+**Example Response:**
+
+```json
+[
+  {
+    "_id": "exploit1",
+    "title": "ExploitName",
+    "version": "1.0.0",
+    "platform": "Windows",
+    "extype": "Type1",
+    "updatedDate": "03/01/2023 12:00 PM UTC",
+    "uncPercent": 80,
+    "suncPercent": 90,
+    "detected": false,
+    "updateStatus": true,
+    "free": true,
+    "beta": false
+  },
+  {
+    "_id": "exploit2",
+    "title": "AnotherExploit",
+    "version": "2.1.0",
+    "platform": "Windows",
+    "extype": "Type2",
+    "updatedDate": "03/02/2023 02:30 PM UTC",
+    "uncPercent": 75,
+    "suncPercent": 85,
+    "detected": false,
+    "updateStatus": true,
+    "free": false,
+    "beta": true
+  }
+]
+```
+
+### Error Response
+
+```json
+{
+  "error": "Service temporarily unavailable",
+  "message": "Unable to fetch exploits data. Please try again later."
+}
+```
+
+## Get Exploit by Name
+
+Retrieves information about a specific exploit by its name.
+
+```
+GET /api/exploits?exploit={exploitName}
+```
+
+### Parameters
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| exploit   | string | The name of the exploit to retrieve |
+
+### Response
+
+Returns a JSON object with the exploit details.
+
+**Example Response:**
+
+```json
+{
+  "_id": "exploit1",
+  "title": "ExploitName",
+  "version": "1.0.0",
+  "platform": "Windows",
+  "extype": "Type1",
+  "updatedDate": "03/01/2023 12:00 PM UTC",
+  "uncPercent": 80,
+  "suncPercent": 90,
+  "detected": false,
+  "updateStatus": true,
+  "free": true,
+  "beta": false
+}
+```
+
+### Error Responses
+
+**Exploit not found:**
+
+```json
+{
+  "error": "Exploit not found"
+}
+```
+
+**Missing parameter:**
+
+```json
+{
+  "error": "Exploit name is required"
+}
+```
+
+**Service unavailable:**
+
+```json
+{
+  "error": "Service temporarily unavailable",
+  "message": "Unable to fetch exploit details. Please try again later."
+}
+```
+
+## Get Exploit Status
+
+Retrieves the status of a specific exploit by its name.
+
+```
+GET /api/status/{exploitName}
+```
+
+### Parameters
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| exploitName | string | The name of the exploit to check status for |
+
+### Response
+
+Returns a JSON object with the exploit status details.
+
+**Example Response:**
+
+```json
+{
+  "_id": "exploit1",
+  "title": "ExploitName",
+  "version": "1.0.0",
+  "platform": "Windows",
+  "extype": "Type1",
+  "updatedDate": "03/01/2023 12:00 PM UTC",
+  "uncPercent": 80,
+  "suncPercent": 90,
+  "detected": false,
+  "updateStatus": true,
+  "free": true,
+  "beta": false
+}
+```
+
+### Error Responses
+
+**Exploit not found:**
+
+```json
+{
+  "error": "Exploit not found"
+}
+```
+
+**Missing parameter:**
+
+```json
+{
+  "error": "Missing exploit parameter"
+}
+```

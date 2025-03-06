@@ -1,33 +1,37 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: 'Pulsery API Documentation'
+description: 'Documentation for the Pulsery API endpoints'
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+# Pulsery API
 
-## Welcome
+Welcome to the Pulsery API documentation. This guide provides information about the available API endpoints.
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+## Base URL
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+All API endpoints are available at:
+
+```
+https://api.pulsery.live
+```
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+Some endpoints require authentication with an API key.
+
+## Response Format
+
+All API responses are returned in JSON format. Successful responses typically include the requested data, while error responses include an `error` field with a description of what went wrong.
+
+Example error response:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+{
+  "error": "Resource not found",
+  "message": "The requested resource could not be found"
+}
 ```
+
+## API Endpoints
+
+The following sections detail the available endpoints.

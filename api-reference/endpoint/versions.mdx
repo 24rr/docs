@@ -1,0 +1,93 @@
+---
+title: 'Versions'
+description: 'Endpoints for retrieving version information'
+---
+
+# Versions API
+
+The Versions API provides access to current and future version information.
+
+## Get Current Version
+
+Retrieves the current version information.
+
+```
+GET /api/versions/current
+```
+
+### Response
+
+Returns a JSON object with the current version details.
+
+**Example Response:**
+
+```json
+{
+  "Windows": "version-hash",
+  "WindowsDate": "2023-03-01T12:00:00.000Z",
+  "Android": "version-hash",
+  "AndroidDate": "2023-03-01T12:00:00.000Z"
+}
+```
+
+### Error Response
+
+```json
+{
+  "error": "Failed to fetch Roblox version",
+  "message": "Error message details",
+  "timestamp": "2023-03-01T12:00:00.000Z"
+}
+```
+
+## Get Future Version
+
+Retrieves information about upcoming version releases.
+
+```
+GET /api/versions/future
+```
+
+### Response
+
+Returns a JSON object with the future version details.
+
+**Example Response:**
+
+```json
+{
+  "Windows": "future-version-hash",
+  "WindowsDate": "2023-03-10T12:00:00.000Z"
+}
+```
+
+### Error Response
+
+```json
+{
+  "error": "Failed to fetch future Roblox version",
+  "message": "Error message details",
+  "timestamp": "2023-03-01T12:00:00.000Z"
+}
+```
+
+## Get Android Version
+
+Retrieves the current Android version information.
+
+```
+GET /api/android-version
+```
+
+### Response
+
+Returns a JSON object with the Android version details.
+
+**Example Response:**
+
+```json
+{
+  "Android": "android-version-hash",
+  "AndroidDate": "2023-03-01T12:00:00.000Z"
+}
+``` 
