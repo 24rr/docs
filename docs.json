@@ -62,16 +62,10 @@
     "dark": "/logo/pulsery-ico.ico"
   },
   "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "https://discord.gg/pulsery"
-      }
-    ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://pulsery.live/dashboard"
+      "label": "Discord",
+      "href": "https://discord.gg/pulsery"
     }
   },
   "footer": {
